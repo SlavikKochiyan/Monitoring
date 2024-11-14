@@ -10,6 +10,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.GraphicsCard;
+import oshi.hardware.NetworkIF;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +30,9 @@ public class Menu extends JFrame {
     JLabel cpusLoad;
     JLabel totalMemory;
     JLabel availablesMemory;
+    JLabel countSentBytes;
+    JLabel countRecvBytes;
+    JLabel networkSpeed;
     JLabel GPUsName;
     JLabel Vendor;
     JLabel GPUsMemory;
@@ -69,6 +73,21 @@ public class Menu extends JFrame {
         logicCores.setSize(100, 50);
         logicCores.setLocation(0, 100);
         frame.add(logicCores);
+
+        countSentBytes = new JLabel();
+        countSentBytes.setSize(100, 50);
+        countSentBytes.setLocation(0, 250);
+        frame.add(countSentBytes);
+
+        countRecvBytes = new JLabel();
+        countRecvBytes.setSize(100, 50);
+        countRecvBytes.setLocation(0, 300);
+        frame.add(countRecvBytes);
+
+        networkSpeed = new JLabel();
+        networkSpeed.setSize(100, 50);
+        networkSpeed.setLocation(0, 350);
+        frame.add(networkSpeed);
 
         GPUsName = new JLabel();
         GPUsName.setSize(500, 50);
@@ -151,5 +170,16 @@ public class Menu extends JFrame {
 
         cpuLoadSeries.addOrUpdate(new Second(), cpuLoad);
         memoryLoadSeries.addOrUpdate(new Second(), availableMemory/(1024*1024));
+
+        for (NetworkIF net: sysInfo.getHardware().getNetworkIFs()){
+            net.updateAttributes();
+            double sendBytes = net.getBytesSent();
+            countSentBytes.setText("Network " + sendBytes);
+            double RecvBytes = net.getBytesRecv();
+            countRecvBytes.setText("Network Recv " + RecvBytes);
+            long speed = net.getSpeed();
+            networkSpeed.setText("Speed: " + speed);
+
+        }
     }
 }
