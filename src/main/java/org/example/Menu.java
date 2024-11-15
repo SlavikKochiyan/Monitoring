@@ -17,6 +17,11 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
 
+/**TODO Сделать сравнение между сетевыми интерфейсами, если значение одного больше, чем значение другого, то отображать
+ TODO значение большего элемента. Поиграться с циклом и командой setVisible.
+ TODO Ну и адаптировать код под мой проект для дальнейшего построения графика нагрузки на сетевуху.**/
+
+
 public class Menu extends JFrame {
     JFrame frame;
     JLabel physicCores;
@@ -25,8 +30,11 @@ public class Menu extends JFrame {
     JLabel totalMemory;
     JLabel availablesMemory;
     JLabel countSentBytes;
+    JLabel countSentBytes2;
     JLabel countRecvBytes;
     JLabel ipAddress;
+    JLabel macAddress;
+    JLabel macAddress2;
     JLabel networkSpeed;
     JLabel GPUsName;
     JLabel Vendor;
@@ -74,6 +82,11 @@ public class Menu extends JFrame {
         countSentBytes.setLocation(0, 250);
         frame.add(countSentBytes);
 
+        countSentBytes2 = new JLabel();
+        countSentBytes2.setSize(100, 50);
+        countSentBytes2.setLocation(0, 200);
+        frame.add(countSentBytes2);
+
         countRecvBytes = new JLabel();
         countRecvBytes.setSize(250, 50);
         countRecvBytes.setLocation(0, 300);
@@ -88,6 +101,16 @@ public class Menu extends JFrame {
         ipAddress.setSize(200, 50);
         ipAddress.setLocation(0, 400);
         frame.add(ipAddress);
+
+        macAddress = new JLabel();
+        macAddress.setSize(200, 50);
+        macAddress.setLocation(0, 450);
+        frame.add(macAddress);
+
+        macAddress2 = new JLabel();
+        macAddress2.setSize(200, 50);
+        macAddress2.setLocation(0, 500);
+        frame.add(macAddress2);
 
         GPUsName = new JLabel();
         GPUsName.setSize(500, 50);
@@ -179,10 +202,19 @@ public class Menu extends JFrame {
             countRecvBytes.setText("Network Recv " + RecvBytes);
             long speed = net.getSpeed();
             networkSpeed.setText("Speed: " + speed);
-            String [] address = net.getIPv4addr();
-            for (int i = 0; i < address.length; i++){
-                ipAddress.setText(address[i]);
+            String [] ipAddres = net.getIPv4addr();
+            for (int i = 0; i < ipAddres.length; i++){
+                ipAddress.setText(ipAddres[i]);
             }
+            macAddress.setText(" " + net.getMacaddr());
+
+            if(net.getDisplayName().toLowerCase().contains("wi-fi") || net.getName().toLowerCase().contains("wlan")){
+                macAddress2.setText(net.getMacaddr());
+                double sendBytes2 = net.getBytesSent();
+                countSentBytes2.setText("Network " + sendBytes2);
+            }
+
+
 
         }
     }
