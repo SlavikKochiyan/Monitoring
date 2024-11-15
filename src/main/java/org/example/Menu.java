@@ -17,12 +17,6 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
 
-/**
- * TODO
- * Understanding how to get information from sensors of computers;
- * Get information about GPU
- **/
-
 public class Menu extends JFrame {
     JFrame frame;
     JLabel physicCores;
@@ -32,6 +26,7 @@ public class Menu extends JFrame {
     JLabel availablesMemory;
     JLabel countSentBytes;
     JLabel countRecvBytes;
+    JLabel ipAddress;
     JLabel networkSpeed;
     JLabel GPUsName;
     JLabel Vendor;
@@ -80,14 +75,19 @@ public class Menu extends JFrame {
         frame.add(countSentBytes);
 
         countRecvBytes = new JLabel();
-        countRecvBytes.setSize(100, 50);
+        countRecvBytes.setSize(250, 50);
         countRecvBytes.setLocation(0, 300);
         frame.add(countRecvBytes);
 
         networkSpeed = new JLabel();
-        networkSpeed.setSize(100, 50);
+        networkSpeed.setSize(200, 50);
         networkSpeed.setLocation(0, 350);
         frame.add(networkSpeed);
+
+        ipAddress = new JLabel();
+        ipAddress.setSize(200, 50);
+        ipAddress.setLocation(0, 400);
+        frame.add(ipAddress);
 
         GPUsName = new JLabel();
         GPUsName.setSize(500, 50);
@@ -175,10 +175,14 @@ public class Menu extends JFrame {
             net.updateAttributes();
             double sendBytes = net.getBytesSent();
             countSentBytes.setText("Network " + sendBytes);
-            double RecvBytes = net.getBytesRecv();
+            long RecvBytes = net.getBytesRecv();
             countRecvBytes.setText("Network Recv " + RecvBytes);
             long speed = net.getSpeed();
             networkSpeed.setText("Speed: " + speed);
+            String [] address = net.getIPv4addr();
+            for (int i = 0; i < address.length; i++){
+                ipAddress.setText(address[i]);
+            }
 
         }
     }
