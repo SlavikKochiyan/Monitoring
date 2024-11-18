@@ -17,11 +17,6 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
 
-/**TODO Сделать сравнение между сетевыми интерфейсами, если значение одного больше, чем значение другого, то отображать
- TODO значение большего элемента. Поиграться с циклом и командой setVisible.
- TODO Ну и адаптировать код под мой проект для дальнейшего построения графика нагрузки на сетевуху.**/
-
-
 public class Menu extends JFrame {
     JFrame frame;
     JLabel physicCores;
