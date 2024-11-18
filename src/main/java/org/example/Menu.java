@@ -32,6 +32,7 @@ public class Menu extends JFrame {
     JLabel countSentBytes;
     JLabel countSentBytes2;
     JLabel countRecvBytes;
+    JLabel countRecvBytes2;
     JLabel ipAddress;
     JLabel macAddress;
     JLabel macAddress2;
@@ -47,12 +48,17 @@ public class Menu extends JFrame {
     Timer timer;
     TimeSeries cpuLoadSeries;
     TimeSeries memoryLoadSeries;
+    TimeSeries networkLoadSeries;
     TimeSeriesCollection dataset;
     TimeSeriesCollection memoryDataset;
+    TimeSeriesCollection networkDataset;
     JFreeChart chart;
     JFreeChart memoryChart;
+    JFreeChart networkChart;
     ChartPanel panel;
     ChartPanel memoryPanel;
+    ChartPanel networkPanel;
+    double sendBytes, sendBytes2, RecvBytes, RecvBytes2;
 
 
     public void createFrame() {
@@ -112,6 +118,11 @@ public class Menu extends JFrame {
         macAddress2.setLocation(0, 500);
         frame.add(macAddress2);
 
+        countRecvBytes2 = new JLabel();
+        countRecvBytes2.setSize(250, 50);
+        countRecvBytes2.setLocation(0, 550);
+        frame.add(countRecvBytes2);
+
         GPUsName = new JLabel();
         GPUsName.setSize(500, 50);
         GPUsName.setLocation(200, 700);
@@ -158,6 +169,13 @@ public class Menu extends JFrame {
         memoryPanel = new ChartPanel(memoryChart);
         memoryPanel.setBounds(300,350,500,300);
         frame.add(memoryPanel);
+
+        networkLoadSeries = new TimeSeries("Network Load");
+        networkDataset = new TimeSeriesCollection(networkLoadSeries);
+        networkChart = ChartFactory.createTimeSeriesChart("Network Load", "Time", "Load (KB/s)", networkDataset,false,true, false);
+        networkPanel = new ChartPanel(networkChart);
+        networkPanel.setBounds(800,50,500,300);
+        frame.add(networkPanel);
         sysInfo();
     }
 
@@ -196,26 +214,34 @@ public class Menu extends JFrame {
 
         for (NetworkIF net: sysInfo.getHardware().getNetworkIFs()){
             net.updateAttributes();
-            double sendBytes = net.getBytesSent();
+            sendBytes = (double) net.getBytesSent() / 1024;
             countSentBytes.setText("Network " + sendBytes);
-            long RecvBytes = net.getBytesRecv();
+            RecvBytes = (double) net.getBytesRecv() / 1024;
             countRecvBytes.setText("Network Recv " + RecvBytes);
             long speed = net.getSpeed();
             networkSpeed.setText("Speed: " + speed);
+            //networkLoadSeries.addOrUpdate(new Second(),sendBytes + RecvBytes);
             String [] ipAddres = net.getIPv4addr();
             for (int i = 0; i < ipAddres.length; i++){
                 ipAddress.setText(ipAddres[i]);
             }
             macAddress.setText(" " + net.getMacaddr());
-
             if(net.getDisplayName().toLowerCase().contains("wi-fi") || net.getName().toLowerCase().contains("wlan")){
                 macAddress2.setText(net.getMacaddr());
-                double sendBytes2 = net.getBytesSent();
+                sendBytes2 = (double) net.getBytesSent() / 1024;
                 countSentBytes2.setText("Network " + sendBytes2);
+                RecvBytes2 = (double) net.getBytesRecv() / 1024;
+                countRecvBytes2.setText(" " + RecvBytes2);
+                networkLoadSeries.addOrUpdate(new Second(),sendBytes2 + RecvBytes2);
             }
-
-
-
+            if(sendBytes2 > sendBytes)
+                countSentBytes.setVisible(false);
+            else if (sendBytes > sendBytes2)
+                countSentBytes2.setVisible(false);
+            if (RecvBytes2 > RecvBytes)
+                countRecvBytes.setVisible(false);
+            else if (RecvBytes > RecvBytes2)
+                countRecvBytes2.setVisible(false);
         }
     }
 }
